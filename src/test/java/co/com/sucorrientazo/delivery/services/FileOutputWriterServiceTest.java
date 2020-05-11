@@ -1,5 +1,6 @@
 package co.com.sucorrientazo.delivery.services;
 
+import co.com.sucorrientazo.delivery.dto.DronOutput;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,8 +18,9 @@ public class FileOutputWriterServiceTest {
     public void shouldCreateAndWriteFile() throws IOException {
         String path = "C:\\DeliveryS4N\\files\\routesout\\out20.txt";
         List<String> positions = List.of("(-2, 4) dirección Occidente", "(-3, 3) dirección Sur", "(-4, 2) dirección Oriente");
+        DronOutput finalPositions = new DronOutput(20, positions);
 
-        fileOutputWriterService.writeFinalPositions(20, positions);
+        fileOutputWriterService.write(List.of(finalPositions));
 
         Path pathFile = Paths.get(path);
         List<String> lines = Files.readAllLines(pathFile);

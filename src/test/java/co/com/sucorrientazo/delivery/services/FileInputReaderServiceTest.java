@@ -1,5 +1,6 @@
 package co.com.sucorrientazo.delivery.services;
 
+import co.com.sucorrientazo.delivery.dto.DronInput;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,12 +12,13 @@ public class FileInputReaderServiceTest {
 
     @Test
     public void shouldReadFileAndReturnListLines() {
-        List<String> lines = fileInputReaderService.read(1);
+        List<DronInput> inputs = fileInputReaderService.read(1);
 
-        Assert.assertNotNull(lines);
-        Assert.assertEquals(3, lines.size());
-        Assert.assertEquals("AAAAIAA", lines.get(0));
-        Assert.assertEquals("DDDAIAD", lines.get(1));
-        Assert.assertEquals("AAIADAD", lines.get(2));
+        Assert.assertNotNull(inputs);
+        Assert.assertEquals(1, inputs.size());
+        Assert.assertEquals(3, inputs.get(0).getRoutes().size());
+        Assert.assertEquals("AAAAIAA", inputs.get(0).getRoutes().get(0));
+        Assert.assertEquals("DDDAIAD", inputs.get(0).getRoutes().get(1));
+        Assert.assertEquals("AAIADAD", inputs.get(0).getRoutes().get(2));
     }
 }
