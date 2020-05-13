@@ -1,12 +1,17 @@
 package co.com.sucorrientazo.delivery.runner;
 
 import co.com.sucorrientazo.delivery.SystemProperties;
-import co.com.sucorrientazo.delivery.dto.*;
+import co.com.sucorrientazo.delivery.dto.CartesianPosition;
+import co.com.sucorrientazo.delivery.dto.Coordinate;
+import co.com.sucorrientazo.delivery.dto.DronInput;
+import co.com.sucorrientazo.delivery.dto.DronOutput;
 import co.com.sucorrientazo.delivery.enums.CardinalPoint;
+import co.com.sucorrientazo.delivery.exceptions.DeliveryException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -22,11 +27,16 @@ public class DeliveryDronRunner {
     }
 
     public DronOutput execute(final DronInput deliveryDron) {
-        List<String> routesPerRound = groupRoutesByDronCapacity(deliveryDron.getRoutes(), this.systemProperties.getDronCapacity());
-        List<String> finalPositions = routesPerRound.stream()
+        List<String> finalPositions = Optional.ofNullable(deliveryDron)
+                .map(DronInput::getRoutes)
+                .map(routes -> groupRoutesByDronCapacity(routes, this.systemProperties.getDronCapacity()))
+                .orElseThrow(() -> new DeliveryException("An error occurred processing the delivery"))
+                .stream()
                 .map(routes -> processRoutePerRound(routes, this.systemProperties.getMaxDistance()))
                 .flatMap(list -> Objects.nonNull(list) ? list.stream() : null)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                ;
+
         return new DronOutput(deliveryDron.getId(), finalPositions);
     }
 
@@ -80,11 +90,15 @@ public class DeliveryDronRunner {
 
     private List<String> groupRoutesByDronCapacity(List<String> routes, Integer dronCapacity) {
 
-        return IntStream.range(0, (routes.size() + dronCapacity - 1) / dronCapacity)
-                .mapToObj(i ->
-                        String.join(",", routes.subList(i * dronCapacity, Math.min(dronCapacity * (i + 1), routes.size())))
-                )
-                .collect(Collectors.toList());
+        if(dronCapacity > 0) {
+            return IntStream.range(0, (routes.size() + dronCapacity - 1) / dronCapacity)
+                    .mapToObj(i ->
+                            String.join(",", routes.subList(i * dronCapacity, Math.min(dronCapacity * (i + 1), routes.size())))
+                    )
+                    .collect(Collectors.toList());
+        }else{
+            throw new DeliveryException("the capacity of the drone is 0");
+        }
     }
 
     private boolean isCoordinateInRange(final Coordinate coordinate, Integer maxDistance){
