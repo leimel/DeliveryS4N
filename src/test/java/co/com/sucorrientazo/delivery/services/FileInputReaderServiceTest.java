@@ -1,18 +1,32 @@
 package co.com.sucorrientazo.delivery.services;
 
 import co.com.sucorrientazo.delivery.dto.DronInput;
+import co.com.sucorrientazo.delivery.SystemProperties;
+import co.com.sucorrientazo.delivery.services.impl.FileInputReaderService;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class FileInputReaderServiceTest {
 
-    FileInputReaderService fileInputReaderService = new FileInputReaderService();
+    @InjectMocks
+    private FileInputReaderService fileInputReaderService;
+
+    @Mock
+    private SystemProperties systemProperties;
 
     @Test
     public void shouldReadFileAndReturnListLines() {
-        List<DronInput> inputs = fileInputReaderService.read(1);
+        when(systemProperties.getTotalDrons()).thenReturn(1);
+        List<DronInput> inputs = fileInputReaderService.read();
 
         Assert.assertNotNull(inputs);
         Assert.assertEquals(1, inputs.size());

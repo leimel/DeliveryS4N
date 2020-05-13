@@ -1,24 +1,28 @@
 package co.com.sucorrientazo.delivery;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 
 public class MainTest {
 
-    Main main = new Main();
-
     @Test
-    public void shouldExecuteProcess(){
-       main.main();
+    public void shouldExecuteProcess() {
+        Main.main();
+
+        File dir = new File(System.getProperty("user.dir") + "\\files\\routesout");
+        Assert.assertEquals(20, dir.listFiles().length);
     }
 
     @AfterClass
-    public static void clenFiles(){
-       File dir = new File("C:\\DeliveryS4N\\files\\routesout");
+    public static void cleanFiles() {
+
+        File dir = new File(System.getProperty("user.dir") + "\\files\\routesout");
 
         File[] files = dir.listFiles();
         for(File file : files)file.delete();
     }
+
 }

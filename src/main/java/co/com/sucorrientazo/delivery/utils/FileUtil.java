@@ -10,11 +10,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FileUtil {
-    private static final Logger LOGGER = Logger.getLogger("co.com.sucorrientazo.delivery.utils.FileUtil");
+    private static final Logger LOGGER = Logger.getLogger("FileUtil");
 
     private FileUtil(){}
 
-    public static List<String> readFile(final String path) {
+    public static List<String> readFile(final String fileName) {
+        String path = getPath("routesin")+ "\\" + fileName;
         try {
             return Files.readAllLines(Paths.get(path));
         } catch (IOException e) {
@@ -23,7 +24,8 @@ public class FileUtil {
         }
     }
 
-    public static void createAndWriteFile(final String path, final List<String> lines) {
+    public static void createAndWriteFile(final String fileName, List<String> lines) {
+        String path = getPath("routesout") + "\\" + fileName;
         try {
             Path pathFile = Files.createFile(Paths.get(path));
             byte[] bytes = String.join("\n", lines).getBytes();
@@ -31,5 +33,9 @@ public class FileUtil {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failed writing file: "+ path);
         }
+    }
+
+    private static String getPath(String resourceName){
+        return System.getProperty("user.dir") + "\\files\\" + resourceName;
     }
 }

@@ -13,11 +13,12 @@ public class FileUtilTest {
 
     @Test
     public void shouldCreateAnWriteFile() throws IOException {
-        List<String> lines = List.of("(-2, 4) dirección Occidente", "(-3, 3) dirección Sur", "(-4, 2) dirección Oriente");
-        String path = "C:\\DeliveryS4N\\src\\test\\resources\\routesout\\out01.txt";
-        FileUtil.createAndWriteFile(path, lines);
 
-        Path pathFile = Paths.get(path);
+        List<String> lines = List.of("(-2, 4) dirección Occidente", "(-3, 3) dirección Sur", "(-4, 2) dirección Oriente");
+        FileUtil.createAndWriteFile("out1999.txt", lines);
+
+
+        Path pathFile = Paths.get(getPath("routesout\\out1999.txt"));
         List<String> linesCreated = Files.readAllLines(pathFile);
 
         Assert.assertNotNull(lines);
@@ -31,8 +32,7 @@ public class FileUtilTest {
 
     @Test
     public void shouldReadFile(){
-        String path = "C:\\DeliveryS4N\\src\\test\\resources\\routesin\\in01.txt";
-        List<String> lines = FileUtil.readFile(path);
+        List<String> lines = FileUtil.readFile("in01.txt");
 
         Assert.assertNotNull(lines);
         Assert.assertEquals(3, lines.size());
@@ -43,10 +43,13 @@ public class FileUtilTest {
 
     @Test
     public void shouldReturnEmptyListByCatchIOException(){
-        String path = "C:\\DeliveryS4N\\src\\test\\resources\\routesin\\out02.txt";
-        List<String> lines = FileUtil.readFile(path);
+        List<String> lines = FileUtil.readFile("out02.txt");
 
         Assert.assertNotNull(lines);
         Assert.assertTrue(lines.isEmpty());
+    }
+
+    private static String getPath(String resourceName){
+        return System.getProperty("user.dir") + "\\files\\" + resourceName;
     }
 }

@@ -1,5 +1,6 @@
 package co.com.sucorrientazo.delivery.runner;
 
+import co.com.sucorrientazo.delivery.SystemProperties;
 import co.com.sucorrientazo.delivery.dto.*;
 import co.com.sucorrientazo.delivery.enums.CardinalPoint;
 
@@ -12,18 +13,25 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DeliveryDronRunner {
-    private static final Logger LOGGER = Logger.getLogger("co.com.sucorrientazo.delivery.runner.DeliveryDronRunner");
+    private static final Logger LOGGER = Logger.getLogger("DeliveryDronRunner");
 
-    public DronOutput execute(final DronInput deliveryDron, final SystemProperties systemProperties) {
-        List<String> routesPerRound = groupRoutesByDronCapacity(deliveryDron.getRoutes(), systemProperties.getDronCapacity());
+    private SystemProperties systemProperties;
+
+    public DeliveryDronRunner(SystemProperties systemProperties) {
+        this.systemProperties = systemProperties;
+    }
+
+    public DronOutput execute(final DronInput deliveryDron) {
+        List<String> routesPerRound = groupRoutesByDronCapacity(deliveryDron.getRoutes(), this.systemProperties.getDronCapacity());
         List<String> finalPositions = routesPerRound.stream()
-                .map(routes -> processRoutePerRound(routes, systemProperties.getMaxDistance()))
+                .map(routes -> processRoutePerRound(routes, this.systemProperties.getMaxDistance()))
                 .flatMap(list -> Objects.nonNull(list) ? list.stream() : null)
                 .collect(Collectors.toList());
         return new DronOutput(deliveryDron.getId(), finalPositions);
     }
 
     private List<String> processRoutePerRound(final String route, final Integer maxDistance) {
+        LOGGER.log(Level.INFO, "Processing round: {0}", route);
         List<String> routes = List.of(route.split(","));
 
         Coordinate coordinate = new Coordinate(0, 0);

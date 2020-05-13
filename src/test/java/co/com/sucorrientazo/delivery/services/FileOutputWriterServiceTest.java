@@ -1,6 +1,7 @@
 package co.com.sucorrientazo.delivery.services;
 
 import co.com.sucorrientazo.delivery.dto.DronOutput;
+import co.com.sucorrientazo.delivery.services.impl.FileOutputWriterService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,12 +17,11 @@ public class FileOutputWriterServiceTest {
 
     @Test
     public void shouldCreateAndWriteFile() throws IOException {
-        String path = "C:\\DeliveryS4N\\files\\routesout\\out20.txt";
         List<String> positions = List.of("(-2, 4) dirección Occidente", "(-3, 3) dirección Sur", "(-4, 2) dirección Oriente");
-        DronOutput finalPositions = new DronOutput(20, positions);
 
-        fileOutputWriterService.write(List.of(finalPositions));
+        fileOutputWriterService.write(List.of(new DronOutput(100, positions)));
 
+        String path = getPath("routesout\\out100.txt");
         Path pathFile = Paths.get(path);
         List<String> lines = Files.readAllLines(pathFile);
 
@@ -32,5 +32,9 @@ public class FileOutputWriterServiceTest {
         Assert.assertEquals("(-4, 2) direcci\u00f3n Oriente", lines.get(2));
 
         Files.delete(pathFile);
+    }
+
+    private String getPath(String resourceName){
+        return System.getProperty("user.dir") + "\\files\\" + resourceName;
     }
 }
